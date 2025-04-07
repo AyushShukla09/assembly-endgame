@@ -24,6 +24,12 @@ export default function Hangman() {
         <span key={index}>{ele.toUpperCase()}</span>
     )
   })
+  const alphabets = 'abcdefghijklmnopqurstuvwxyz'
+  const keyboard = alphabets.split('').map((val,index)=>{
+    return (
+      <button key={index}>{val.toUpperCase()}</button>
+    )
+  })
   return (
     <main>
       <header>
@@ -41,6 +47,10 @@ export default function Hangman() {
       <section className="word">
         {letters}
       </section>
+      <section className="keyboard">
+        {keyboard}
+      </section>
+      <button className="new-game">New Game</button>
     </main>
   );
 }
