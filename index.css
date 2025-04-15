@@ -62,10 +62,11 @@ span.chip {
     padding: 4.5px;
 }
 
-section.word{
+section.word {
     display: flex;
     justify-content: center;
-    gap: 9px;
+    gap: 2px;
+    margin-bottom: 20px;
 }
 
 section.word > span {
@@ -80,12 +81,12 @@ section.word > span {
 }
 
 section.keyboard {
-    margin-top: 25px;
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
     justify-content: center;
     max-width: 450px;
+    margin-bottom: 36px;
 }
 
 section.keyboard > button {
@@ -98,7 +99,6 @@ section.keyboard > button {
 }
 
 button.new-game {
-    margin-top: 25px;
     background-color: #11B5E5;
     border: 1px solid #D7D7D7;
     border-radius: 4px;
@@ -108,4 +108,12 @@ button.new-game {
     display: block;
     margin-inline: auto;
     cursor: pointer;
+}
+
+section.keyboard > button.correct {
+    background-color: #10A95B;
+}
+
+section.keyboard > button.wrong {
+    background-color: #EC5D49;
 }
