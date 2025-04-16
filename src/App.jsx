@@ -6,6 +6,12 @@ export default function Hangman() {
     const [currentWord, setCurrentWord] = React.useState("react");
     const [guessedLetter, setGuessedLetter] = React.useState([]);
 
+    const wrongGuessCount = guessedLetter.filter(
+        letter => !currentWord.includes(letter)).length
+
+    
+
+
     const alphabets = "abcdefghijklmnopqrstuvwxyz";
 
     function handleGuessedLetter(newLetter) {
@@ -14,20 +20,24 @@ export default function Hangman() {
         });
     }
 
-    const languageElements = languages.map((ele) => {
+    const languageElements = languages.map((ele,index) => {
         const style = {
             background: ele.backgroundColor,
             color: ele.color,
         };
+        const isLanguageLost = index < wrongGuessCount
+        const isLangLostClass = clsx("chip", isLanguageLost && "lost")
         return (
-            <span className="chips" style={style} key={ele.name}>
+            <span 
+                className={isLangLostClass} 
+                style={style} key={ele.name}>
                 {ele.name}
             </span>
         );
     });
 
     const letters = currentWord.split("").map((ele, index) => {
-        return <span key={index}>{ele.toUpperCase()}</span>;
+        return <span key={index}>{(guessedLetter.includes(ele)) ? ele : null}</span>;
     });
 
     const keyboard = alphabets.split("").map((val) => {
