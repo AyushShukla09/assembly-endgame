@@ -1,6 +1,20 @@
 import React from "react";
 import clsx from "clsx";
 import { languages } from "./languages";
+import {getFarewellText} from "./utils.js"; // Import the new function
+
+
+/**
+ * Challenge: Bid farewell to each programming language
+ * as it gets erased from existance 👋😭
+ * 
+ * Use the `getFarewellText` function from the new utils.js
+ * file to generate the text.
+ * 
+ * Check hint.md if you're feeling stuck, but do your best
+ * to solve the challenge without the hint! 🕵️
+ */
+
 
 export default function Hangman() {
     const [currentWord, setCurrentWord] = React.useState("react");
@@ -8,10 +22,11 @@ export default function Hangman() {
 
     const wrongGuessCount = guessedLetter.filter(
         letter => !currentWord.includes(letter)).length
-
-    
-
-
+        const isGameLost = wrongGuessCount >= languages.length - 1
+    const isGameWon = currentWord.split("").every(letter => guessedLetter.includes(letter))
+    const isGameOver = (wrongGuessCount == languages.length - 1) || isGameWon
+    const lastGuessedLetter = guessedLetter[guessedLetter.length - 1]
+    const isLastGuessIncorrect = lastGuessedLetter && !currentWord.includes(lastGuessedLetter)
     const alphabets = "abcdefghijklmnopqrstuvwxyz";
 
     function handleGuessedLetter(newLetter) {
@@ -19,8 +34,7 @@ export default function Hangman() {
             return !prev.includes(newLetter) ? [...prev, newLetter] : [...prev];
         });
     }
-
-    const languageElements = languages.map((ele,index) => {
+    const languageElements = languages.map((ele, index) => {
         const style = {
             background: ele.backgroundColor,
             color: ele.color,
@@ -28,8 +42,8 @@ export default function Hangman() {
         const isLanguageLost = index < wrongGuessCount
         const isLangLostClass = clsx("chip", isLanguageLost && "lost")
         return (
-            <span 
-                className={isLangLostClass} 
+            <span
+                className={isLangLostClass}
                 style={style} key={ele.name}>
                 {ele.name}
             </span>
@@ -58,6 +72,13 @@ export default function Hangman() {
             </button>
         );
     });
+
+    const gameStatusClass = clsx("game-status", {
+        won: isGameWon,
+        lost: isGameLost,
+        farewell: !isGameOver && isLastGuessIncorrect
+    })
+
     return (
         <main>
             <header>
@@ -67,14 +88,29 @@ export default function Hangman() {
                     from Assembly
                 </p>
             </header>
-            <section className="game-status">
-                <h2>You Win</h2>
-                <p>Well Done!</p>
+            <section className={gameStatusClass}>
+                {
+                    (isGameOver) ?
+                        ((isGameWon) ?
+                            <>
+                                <h2>You Win</h2>
+                                <p>Well Done!</p>
+                            </> :
+                            <>
+                                <h2>Game Over</h2>
+                                <p>Learn Assembly!</p>
+                            </> ):
+                        <>
+                        {isLastGuessIncorrect ? <p className="farewell-message">
+                    {getFarewellText(languages[wrongGuessCount - 1].name)}
+                </p> : null}
+                        </>
+                }
             </section>
             <section className="language-chips">{languageElements}</section>
             <section className="word">{letters}</section>
             <section className="keyboard">{keyboard}</section>
-            <button className="new-game">New Game</button>
+            {(isGameOver || isGameWon) && <button className="new-game"> New Game </button>}
         </main>
     );
 }
