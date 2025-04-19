@@ -1,28 +1,15 @@
 import React from "react";
 import clsx from "clsx";
 import { languages } from "./languages";
-import {getFarewellText} from "./utils.js"; // Import the new function
-
-
-/**
- * Challenge: Bid farewell to each programming language
- * as it gets erased from existance 👋😭
- * 
- * Use the `getFarewellText` function from the new utils.js
- * file to generate the text.
- * 
- * Check hint.md if you're feeling stuck, but do your best
- * to solve the challenge without the hint! 🕵️
- */
-
+import { getFarewellText, getRandomWord } from "./utils.js";
 
 export default function Hangman() {
-    const [currentWord, setCurrentWord] = React.useState("react");
+    const [currentWord, setCurrentWord] = React.useState(getRandomWord());
     const [guessedLetter, setGuessedLetter] = React.useState([]);
 
     const wrongGuessCount = guessedLetter.filter(
         letter => !currentWord.includes(letter)).length
-        const isGameLost = wrongGuessCount >= languages.length - 1
+    const isGameLost = wrongGuessCount >= languages.length - 1
     const isGameWon = currentWord.split("").every(letter => guessedLetter.includes(letter))
     const isGameOver = (wrongGuessCount == languages.length - 1) || isGameWon
     const lastGuessedLetter = guessedLetter[guessedLetter.length - 1]
@@ -51,7 +38,10 @@ export default function Hangman() {
     });
 
     const letters = currentWord.split("").map((ele, index) => {
-        return <span key={index}>{(guessedLetter.includes(ele)) ? ele : null}</span>;
+        const letterClassName = clsx(isGameLost && !guessedLetter.includes(ele) && 'missed-letter')
+        return <span key={index} className={letterClassName}>
+            {(guessedLetter.includes(ele)) || isGameLost ? ele : null}
+        </span>;
     });
 
     const keyboard = alphabets.split("").map((val) => {
@@ -66,6 +56,7 @@ export default function Hangman() {
             <button
                 key={val}
                 className={buttonClass}
+                disabled={isGameOver}
                 onClick={() => handleGuessedLetter(val)}
             >
                 {val.toUpperCase()}
@@ -78,6 +69,11 @@ export default function Hangman() {
         lost: isGameLost,
         farewell: !isGameOver && isLastGuessIncorrect
     })
+
+    const startNewGame = () => {
+        setCurrentWord(getRandomWord())
+        setGuessedLetter([])
+    }
 
     return (
         <main>
@@ -99,18 +95,18 @@ export default function Hangman() {
                             <>
                                 <h2>Game Over</h2>
                                 <p>Learn Assembly!</p>
-                            </> ):
+                            </>) :
                         <>
-                        {isLastGuessIncorrect ? <p className="farewell-message">
-                    {getFarewellText(languages[wrongGuessCount - 1].name)}
-                </p> : null}
+                            {isLastGuessIncorrect ? <p className="farewell-message">
+                                {getFarewellText(languages[wrongGuessCount - 1].name)}
+                            </p> : null}
                         </>
                 }
             </section>
             <section className="language-chips">{languageElements}</section>
             <section className="word">{letters}</section>
             <section className="keyboard">{keyboard}</section>
-            {(isGameOver || isGameWon) && <button className="new-game"> New Game </button>}
+            {(isGameOver || isGameWon) && <button className="new-game" onClick={startNewGame}> New Game </button>}
         </main>
     );
 }
